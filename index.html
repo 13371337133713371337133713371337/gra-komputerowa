@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Znajdź Mysz - gra internetowa</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+        }
+        h1 {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80vmin;
+            height: 48vmin;
+            table-layout: fixed;
+        }
+        td {
+            border: 1px solid black;
+            text-align: center;
+            font-size: 4vmin;
+            cursor: pointer;
+            width: 16vmin;
+            height: 16vmin;
+            vertical-align: middle;
+        }
+        .czerwony {
+            background-color: red;
+            pointer-events: none;
+        }
+        #tekst {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: white;
+            font-size: 4vmin;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .czerwony #tekst {
+            opacity: 1;
+        }
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 2px solid black;
+            padding: 20px;
+            font-size: 3vmin;
+            z-index: 1000;
+            line-height: 150%;
+        }
+        #zamknij {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Znajdź Mysz - gra internetowa</h1>
+    <table>
+        <tr>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+        </tr>
+        <tr>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+        </tr>
+        <tr>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+            <td onclick="pokazMysz(this)"></td>
+        </tr>
+    </table>
+
+    <div id="tekst"></div>
+
+    <audio id="dzwiek">
+        <source src="dzwiek.wav" type="audio/wav">
+    </audio>
+
+    <div id="popup">
+        <p align="justify">Gra internetowa "Znajdź Mysz" rozgrywa się na planszy w formie tabeli 3x5. Celem gry jest odgadnięcie komórki, w której w danym momencie znajduje się Mysz, poprzez wskazanie jej kursorem. <br> Przykładowe metody pomagające odnaleźć okienko, w którym znajduje się Mysz to: postrzeganie pozazmysłowe, jasnowidzenie, wróżby, intuicja prorocza, dobra znajomość nawyków gryzoni etc. <br> Mysz nie daje się do niczego przekonać ani przekupić, bo znajduje się w komputerze, a także w Internecie. Nie można z nią więc porozmawiać.
+<br>W przypadku nieodnalezienia Myszy gracz przegrywa.
+<br>Gra trwa tyle, ile tylko gracz sobie zażyczy, bo Mysz jest tylko w komputerze, więc się nie męczy.</p>
+        <span id="zamknij">&times;</span>
+    </div>
+
+    <script>
+        const teksty = ["(´＿｀。)", "(∩︵∩)", "(◡︵◡)", "( ;´ - `;)", "( ._. )", "( • ᴖ • ｡)", "(˶˃⤙˂˶)"];
+        let ostatniTekst;
+        let ostatniaKomorka;
+        const dzwiek = document.getElementById('dzwiek');
+
+        function losujTekst() {
+            let dostepneTeksty = teksty.filter(tekst => tekst !== ostatniTekst);
+            let losowyTekst = dostepneTeksty[Math.floor(Math.random() * dostepneTeksty.length)];
+            ostatniTekst = losowyTekst;
+            return losowyTekst;
+        }
+
+        function pokazMysz(komorka) {
+            if (document.body.classList.contains('czerwony')) {
+                return;
+            }
+
+            dzwiek.currentTime = 0;
+            dzwiek.play();
+
+            document.body.classList.add('czerwony');
+            document.getElementById('tekst').textContent = losujTekst();
+
+            setTimeout(() => {
+                document.body.classList.remove('czerwony');
+            }, 1000);
+
+            let komorki = document.querySelectorAll('td');
+            komorki.forEach(k => k.innerHTML = '');
+            
+            let dostepneKomorki = Array.from(komorki).filter(k => k !== komorka && k !== ostatniaKomorka);
+            let losowaKomorka = dostepneKomorki[Math.floor(Math.random() * dostepneKomorki.length)];
+            losowaKomorka.innerHTML = '(^.^)<';
+            ostatniaKomorka = losowaKomorka;
+            
+            komorka.innerHTML = 'nie tu!';
+
+        }
+
+        document.getElementById('zamknij').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
